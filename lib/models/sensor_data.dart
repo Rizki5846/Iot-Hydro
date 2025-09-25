@@ -1,62 +1,67 @@
 class SensorData {
   final String deviceId;
   final double temperature;
-  final double humidity;
+  final double soilHum; // Changed from humidity to soilHum
   final double ph;
-  final double ec;
+  final double tds; // Changed from ec to tds
   final int waterLevel;
-  final bool pumpOn;
+  final bool pumpWater; // Added for water pump
+  final bool pumpNutrient; // Added for nutrient pump
 
   SensorData({
     required this.deviceId,
     required this.temperature,
-    required this.humidity,
+    required this.soilHum,
     required this.ph,
-    required this.ec,
+    required this.tds,
     required this.waterLevel,
-    required this.pumpOn,
+    required this.pumpWater,
+    required this.pumpNutrient,
   });
 
   factory SensorData.fromJson(Map<String, dynamic> json) {
     return SensorData(
-      deviceId: json['device_id'],
+      deviceId: json['device_id'] ?? 'hydro_001',
       temperature: (json['temperature'] ?? 0).toDouble(),
-      humidity: (json['humidity'] ?? 0).toDouble(),
+      soilHum: (json['soilHum'] ?? 0).toDouble(), // Changed key
       ph: (json['ph'] ?? 0).toDouble(),
-      ec: (json['ec'] ?? 0).toDouble(),
+      tds: (json['tds'] ?? 0).toDouble(), // Changed key
       waterLevel: (json['waterLevel'] ?? 0),
-      pumpOn: (json['pumpOn'] ?? false),
+      pumpWater: (json['pumpWater'] ?? false), // New field
+      pumpNutrient: (json['pumpNutrient'] ?? false), // New field
     );
   }
 
   Map<String, dynamic> toJson() => {
         'device_id': deviceId,
         'temperature': temperature,
-        'humidity': humidity,
+        'soilHum': soilHum,
         'ph': ph,
-        'ec': ec,
+        'tds': tds,
         'waterLevel': waterLevel,
-        'pumpOn': pumpOn,
+        'pumpWater': pumpWater,
+        'pumpNutrient': pumpNutrient,
       };
 
-  // Tambahkan copyWith
   SensorData copyWith({
     String? deviceId,
     double? temperature,
-    double? humidity,
+    double? soilHum,
     double? ph,
-    double? ec,
+    double? tds,
     int? waterLevel,
-    bool? pumpOn,
+    bool? pumpWater,
+    bool? pumpNutrient,
   }) {
     return SensorData(
       deviceId: deviceId ?? this.deviceId,
       temperature: temperature ?? this.temperature,
-      humidity: humidity ?? this.humidity,
+      soilHum: soilHum ?? this.soilHum,
       ph: ph ?? this.ph,
-      ec: ec ?? this.ec,
+      tds: tds ?? this.tds,
       waterLevel: waterLevel ?? this.waterLevel,
-      pumpOn: pumpOn ?? this.pumpOn,
+      pumpWater: pumpWater ?? this.pumpWater,
+      pumpNutrient: pumpNutrient ?? this.pumpNutrient,
     );
   }
 }

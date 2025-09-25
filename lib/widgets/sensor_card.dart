@@ -8,6 +8,7 @@ class SensorCard extends StatelessWidget {
   final IconData? icon;
   final bool? isOn;
   final VoidCallback? onPressed;
+  final bool useMaterialButton; // <- tambahan
 
   const SensorCard({
     super.key,
@@ -18,6 +19,7 @@ class SensorCard extends StatelessWidget {
     this.icon,
     this.isOn,
     this.onPressed,
+    this.useMaterialButton = false, // default false = animasi custom
   });
 
   @override
@@ -31,11 +33,13 @@ class SensorCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             if (icon != null)
-              Icon(icon,
-                  size: 32,
-                  color: isOn != null
-                      ? (isOn! ? Colors.green : Colors.grey)
-                      : color),
+              Icon(
+                icon,
+                size: 32,
+                color: isOn != null
+                    ? (isOn! ? Colors.green : Colors.grey)
+                    : color,
+              ),
             const SizedBox(height: 8),
             Text(label,
                 style: const TextStyle(
@@ -58,53 +62,70 @@ class SensorCard extends StatelessWidget {
                   value: progress!.clamp(0.0, 1.0),
                   minHeight: 8,
                   backgroundColor: Colors.grey[300],
-                  valueColor: AlwaysStoppedAnimation<Color>(
-                      progress! > 0.3 ? Colors.green : Colors.red),
+                  valueColor: AlwaysStoppedAnimation<Color>(color),
                 ),
               ),
             ],
             if (onPressed != null) ...[
               const SizedBox(height: 8),
-              GestureDetector(
-                onTap: onPressed,
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 300),
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 16, vertical: 8),
-                  decoration: BoxDecoration(
-                    color: isOn != null
-                        ? (isOn! ? Colors.green : Colors.white)
-                        : color,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                        color: isOn != null
-                            ? (isOn! ? Colors.green : Colors.grey)
-                            : color,
-                        width: 2),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                          isOn != null
-                              ? Icons.eco
-                              : icon,
-                          color: isOn != null
-                              ? (isOn! ? Colors.white : Colors.green)
-                              : Colors.white),
-                      const SizedBox(width: 8),
-                      Text(
-                        isOn != null ? (isOn! ? "ON" : "OFF") : "Status",
-                        style: TextStyle(
-                            color: isOn != null
-                                ? (isOn! ? Colors.white : Colors.green)
-                                : Colors.white,
-                            fontWeight: FontWeight.bold),
+              useMaterialButton
+                  ? ElevatedButton.icon(
+                      onPressed: onPressed,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: isOn == true ? color : Colors.white,
+                        foregroundColor: isOn == true ? Colors.white : color,
+                        side: BorderSide(color: color, width: 2),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 8),
                       ),
-                    ],
-                  ),
-                ),
-              ),
+                      icon: const Icon(Icons.power_settings_new),
+                      label: Text(isOn == true ? "Turn OFF" : "Turn ON"),
+                    )
+                  : GestureDetector(
+                      onTap: onPressed,
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 300),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: isOn != null
+                              ? (isOn! ? color : Colors.white)
+                              : color,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                              color: isOn != null
+                                  ? (isOn! ? color : Colors.grey)
+                                  : color,
+                              width: 2),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                                isOn != null
+                                    ? Icons.power_settings_new
+                                    : icon,
+                                color: isOn != null
+                                    ? (isOn! ? Colors.white : color)
+                                    : Colors.white),
+                            const SizedBox(width: 8),
+                            Text(
+                              isOn != null
+                                  ? (isOn! ? "ON" : "OFF")
+                                  : "Control",
+                              style: TextStyle(
+                                  color: isOn != null
+                                      ? (isOn! ? Colors.white : color)
+                                      : Colors.white,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
             ],
           ],
         ),

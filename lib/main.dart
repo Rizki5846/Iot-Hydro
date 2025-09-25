@@ -4,29 +4,35 @@ import 'providers/mqtt_provider.dart';
 import 'screens/home_screen.dart';
 
 void main() {
-  runApp(const HydroApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => MqttProvider()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
-class HydroApp extends StatelessWidget {
-  const HydroApp({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => MqttProvider()..initializeMQTT(),
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Hidroponik Dashboard',
-        theme: ThemeData(
-          primarySwatch: Colors.green,
-          scaffoldBackgroundColor: Colors.white,
-          appBarTheme: const AppBarTheme(
-            backgroundColor: Colors.green,
-            foregroundColor: Colors.white,
+    return MaterialApp(
+      title: 'Hydroponic Monitor',
+      theme: ThemeData(
+        primarySwatch: Colors.green,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+        cardTheme: CardThemeData(   // ✅ fix di sini
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
           ),
+          elevation: 3,
         ),
-        home: const HomeScreen(),
       ),
+      debugShowCheckedModeBanner: false,
+      home: const HomeScreen(),
     );
   }
 }

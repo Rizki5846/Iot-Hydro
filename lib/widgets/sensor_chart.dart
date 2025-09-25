@@ -1,26 +1,20 @@
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:syncfusion_flutter_charts/charts.dart';
 
 class SensorChart extends StatelessWidget {
+  final String label;
   final List<double> data;
   final Color color;
-  final String label;
 
   const SensorChart({
     super.key,
+    required this.label,
     required this.data,
     required this.color,
-    required this.label,
   });
 
   @override
   Widget build(BuildContext context) {
-    final chartData = data
-        .asMap()
-        .entries
-        .map((e) => _ChartData(x: e.key.toString(), y: e.value))
-        .toList();
-
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       margin: const EdgeInsets.symmetric(vertical: 8),
@@ -32,21 +26,30 @@ class SensorChart extends StatelessWidget {
             Text(label,
                 style: const TextStyle(
                     fontSize: 16, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 10),
+            const SizedBox(height: 12),
             SizedBox(
-              height: 180,
-              child: SfCartesianChart(
-                primaryXAxis: CategoryAxis(),
-                primaryYAxis: NumericAxis(),
-                series: <LineSeries<_ChartData, String>>[
-                  LineSeries<_ChartData, String>(
-                    dataSource: chartData,
-                    xValueMapper: (_ChartData d, _) => d.x,
-                    yValueMapper: (_ChartData d, _) => d.y,
-                    color: color,
-                    markerSettings: const MarkerSettings(isVisible: true),
-                  ),
-                ],
+              height: 200,
+              child: LineChart(
+                LineChartData(
+                  backgroundColor: Colors.white,
+                  gridData: FlGridData(show: true),
+                  titlesData: FlTitlesData(show: false),
+                  borderData: FlBorderData(show: true),
+                  lineBarsData: [
+                    LineChartBarData(
+                      isCurved: true,
+                      color: color,
+                      barWidth: 3,
+                      belowBarData: BarAreaData(
+                        show: true,
+                        color: color.withOpacity(0.2),
+                      ),
+                      spots: data.asMap().entries.map((e) {
+                        return FlSpot(e.key.toDouble(), e.value);
+                      }).toList(),
+                    )
+                  ],
+                ),
               ),
             ),
           ],
@@ -54,10 +57,4 @@ class SensorChart extends StatelessWidget {
       ),
     );
   }
-}
-
-class _ChartData {
-  final String x;
-  final double y;
-  _ChartData({required this.x, required this.y});
 }
